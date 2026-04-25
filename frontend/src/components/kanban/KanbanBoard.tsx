@@ -18,19 +18,20 @@ import {
   DragStartEvent, 
   DragOverEvent, 
   DragEndEvent, 
-  defaultDropAnimationSideEffects
+  defaultDropAnimationSideEffects,
+  closestCenter,
+  CollisionDetection
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, horizontalListSortingStrategy } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, LayoutGrid, Plus } from "lucide-react";
 
 import KanbanColumn from "./KanbanColumn";
 import KanbanCard from "./KanbanCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { LayoutGrid } from "lucide-react";
 
 export default function KanbanBoard({ boardId }: { boardId: string }) {
   const router = useRouter();
@@ -133,7 +134,7 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
       <div className="flex-1 overflow-x-auto p-6 flex gap-6">
         <DndContext
           sensors={sensors}
-          collisionDetection={closestCorners}
+          collisionDetection={customCollisionDetection}
           onDragStart={onDragStart}
           onDragOver={onDragOver}
           onDragEnd={onDragEnd}
@@ -145,49 +146,53 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
 
             {/* Empty state when no columns */}
             {board.columns.length === 0 && !isAddingCol && (
-              <div className="flex flex-col items-center justify-center w-full min-h-[300px] text-center">
-                <div className="rounded-2xl bg-muted/40 p-6 mb-4">
-                  <LayoutGrid className="size-12 text-muted-foreground/40" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <div className="flex flex-col items-center justify-center max-w-md w-full text-center p-6">
+                  <div className="rounded-2xl bg-muted/40 p-6 mb-4">
+                    <LayoutGrid className="size-12 text-muted-foreground/40" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">No columns yet</h3>
+                  <p className="text-sm text-muted-foreground mb-6">
+                    Get started by creating your first column to organize your tasks.
+                  </p>
+                  <Button onClick={() => setIsAddingCol(true)} size="lg">
+                    <Plus className="mr-2 size-4" /> Create your first column
+                  </Button>
                 </div>
-                <h3 className="text-lg font-semibold text-muted-foreground mb-1">No columns yet</h3>
-                <p className="text-sm text-muted-foreground/70 mb-4 max-w-xs">
-                  Get started by creating your first column to organize your tasks.
-                </p>
-                <Button onClick={() => setIsAddingCol(true)}>
-                  + Create your first column
-                </Button>
               </div>
             )}
           </SortableContext>
 
           {/* Add Column Button */}
-          <div className="w-[300px] flex-shrink-0">
-            {isAddingCol ? (
-              <form onSubmit={handleAddColumn} className="bg-muted/30 p-2 rounded-xl border space-y-2">
-                <Input 
-                  autoFocus 
-                  value={newColTitle} 
-                  onChange={e => setNewColTitle(e.target.value)} 
-                  placeholder="Column title..." 
-                  className="h-8 shadow-none" 
-                />
-                <div className="flex gap-2">
-                  <Button size="sm" type="submit" className="flex-1 h-8">Add</Button>
-                  <Button variant="ghost" size="sm" onClick={() => setIsAddingCol(false)} className="flex-1 h-8">Cancel</Button>
-                </div>
-              </form>
-            ) : (
-              <Button variant="outline" className="w-full h-12 border-dashed bg-muted/20 hover:bg-muted/50 transition-colors" onClick={() => setIsAddingCol(true)}>
-                + Add another column
-              </Button>
-            )}
-          </div>
+          {(board.columns.length > 0 || isAddingCol) && (
+            <div className="w-[300px] flex-shrink-0">
+              {isAddingCol ? (
+                <form onSubmit={handleAddColumn} className="bg-muted/30 p-2 rounded-xl border space-y-2">
+                  <Input 
+                    autoFocus 
+                    value={newColTitle} 
+                    onChange={e => setNewColTitle(e.target.value)} 
+                    placeholder="Column title..." 
+                    className="h-8 shadow-none" 
+                  />
+                  <div className="flex gap-2">
+                    <Button size="sm" type="submit" className="flex-1 h-8">Add</Button>
+                    <Button variant="ghost" size="sm" onClick={() => setIsAddingCol(false)} className="flex-1 h-8">Cancel</Button>
+                  </div>
+                </form>
+              ) : (
+                <Button variant="outline" className="w-full h-12 border-dashed bg-muted/20 hover:bg-muted/50 transition-colors" onClick={() => setIsAddingCol(true)}>
+                  + Add another column
+                </Button>
+              )}
+            </div>
+          )}
 
           {/* Drag Overlay Render */}
           {createPortal(
             <DragOverlay dropAnimation={{ sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: "0.4" } } }) }}>
-              {activeColumn && <KanbanColumn column={activeColumn} cards={activeColumn.cards} />}
-              {activeCard && <KanbanCard card={activeCard} />}
+              {activeColumn && <KanbanColumn column={activeColumn} cards={activeColumn.cards} isOverlay />}
+              {activeCard && <KanbanCard card={activeCard} isOverlay />}
             </DragOverlay>,
             document.body
           )}
@@ -195,6 +200,24 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
       </div>
     </div>
   );
+
+  function customCollisionDetection(args: Parameters<CollisionDetection>[0]) {
+    const { active, droppableContainers } = args;
+    
+    // If dragging a column, only detect collisions with other columns
+    if (active.data.current?.type === "Column") {
+      const columnContainers = droppableContainers.filter(
+        (c) => c.data.current?.type === "Column"
+      );
+      return closestCenter({
+        ...args,
+        droppableContainers: columnContainers,
+      });
+    }
+    
+    // Default to closestCorners for cards
+    return closestCorners(args);
+  }
 
   function onDragStart(event: DragStartEvent) {
     if (event.active.data.current?.type === "Column") {

@@ -21,9 +21,10 @@ const LABEL_COLORS = [
 
 interface KanbanCardProps {
   card: CardType;
+  isOverlay?: boolean;
 }
 
-export default function KanbanCard({ card }: KanbanCardProps) {
+export default function KanbanCard({ card, isOverlay }: KanbanCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const { updateCard } = useBoardStore();
 
@@ -68,7 +69,7 @@ export default function KanbanCard({ card }: KanbanCardProps) {
     !isToday(dueDate);
   const isDueToday = dueDate && !card.is_completed && isToday(dueDate);
 
-  if (isDragging) {
+  if (isDragging && !isOverlay) {
     return (
       <div
         ref={setNodeRef}
@@ -91,7 +92,7 @@ export default function KanbanCard({ card }: KanbanCardProps) {
           className="hover:ring-2 hover:ring-primary/50 transition-all shadow-sm overflow-hidden cursor-pointer"
           style={
             card.color
-              ? { borderTop: `3px solid ${card.color}` }
+              ? { borderTop: `8px solid ${card.color}` }
               : undefined
           }
           onClick={() => setIsEditing(true)}

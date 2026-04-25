@@ -10,14 +10,15 @@ import { Input } from "@/components/ui/input";
 import { api } from "@/lib/api";
 import { useBoardStore } from "@/lib/boardStore";
 import { toast } from "sonner";
-import { Plus } from "lucide-react";
+import { Plus, GripVertical } from "lucide-react";
 
 interface KanbanColumnProps {
   column: ColumnType;
   cards: CardType[];
+  isOverlay?: boolean;
 }
 
-export default function KanbanColumn({ column, cards }: KanbanColumnProps) {
+export default function KanbanColumn({ column, cards, isOverlay }: KanbanColumnProps) {
   const [isAddingCard, setIsAddingCard] = useState(false);
   const [newCardTitle, setNewCardTitle] = useState("");
   const addCardStore = useBoardStore((state) => state.addCard);
@@ -51,7 +52,7 @@ export default function KanbanColumn({ column, cards }: KanbanColumnProps) {
     }
   };
 
-  if (isDragging) {
+  if (isDragging && !isOverlay) {
     return (
       <div
         ref={setNodeRef}
@@ -64,9 +65,18 @@ export default function KanbanColumn({ column, cards }: KanbanColumnProps) {
   return (
     <div ref={setNodeRef} style={style} className="bg-muted/30 w-[300px] flex-shrink-0 rounded-xl flex flex-col max-h-full border border-border/50 shadow-sm">
       {/* Column Header (Draggable) */}
-      <div {...attributes} {...listeners} className="p-4 font-semibold text-sm flex items-center justify-between cursor-grab touch-manipulation hover:bg-muted/50 rounded-t-xl transition-colors">
-        <span className="truncate">{column.title}</span>
-        <span className="rounded-full bg-background/80 text-xs px-2 py-0.5 text-muted-foreground border">
+      <div 
+        {...attributes} 
+        {...listeners} 
+        className="p-4 font-semibold text-sm flex items-center justify-between hover:bg-muted/50 rounded-t-xl transition-colors group cursor-grab active:cursor-grabbing touch-manipulation"
+      >
+        <div className="flex items-center gap-2 overflow-hidden pointer-events-none">
+          <div className="text-muted-foreground hover:text-foreground opacity-50 group-hover:opacity-100 transition-opacity">
+            <GripVertical className="size-4 shrink-0" />
+          </div>
+          <span className="truncate">{column.title}</span>
+        </div>
+        <span className="rounded-full bg-background/80 text-xs px-2 py-0.5 text-muted-foreground border shrink-0 ml-2">
           {cards.length}
         </span>
       </div>

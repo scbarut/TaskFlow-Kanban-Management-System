@@ -264,33 +264,37 @@ export default function CardEditModal({
           <div className="space-y-1.5">
             <label className="text-sm font-medium">Due Date</label>
             <div className="flex items-center gap-2">
-              <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-                <PopoverTrigger
-                  render={
-                    <Button
-                      variant="outline"
-                      className="w-full justify-start text-left font-normal h-9"
+              <div className="flex-1 min-w-0">
+                <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                  <PopoverTrigger
+                    render={
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start text-left font-normal h-9 overflow-hidden"
+                      />
+                    }
+                  >
+                    <CalendarIcon className="mr-2 size-4 shrink-0 text-muted-foreground" />
+                    <span className="truncate">
+                      {dueDate ? (
+                        format(dueDate, "PPP")
+                      ) : (
+                        <span className="text-muted-foreground">Pick a date</span>
+                      )}
+                    </span>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={dueDate}
+                      onSelect={(date) => {
+                        setDueDate(date || undefined);
+                        setCalendarOpen(false);
+                      }}
                     />
-                  }
-                >
-                  <CalendarIcon className="mr-2 size-4 text-muted-foreground" />
-                  {dueDate ? (
-                    format(dueDate, "PPP")
-                  ) : (
-                    <span className="text-muted-foreground">Pick a date</span>
-                  )}
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={dueDate}
-                    onSelect={(date) => {
-                      setDueDate(date || undefined);
-                      setCalendarOpen(false);
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
+                  </PopoverContent>
+                </Popover>
+              </div>
               {dueDate && (
                 <Button
                   type="button"
