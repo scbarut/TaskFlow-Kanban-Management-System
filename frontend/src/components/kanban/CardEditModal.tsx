@@ -143,7 +143,7 @@ export default function CardEditModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-lg"
+        className="sm:max-w-[512px]"
         onPointerDown={(e) => e.stopPropagation()}
       >
         <DialogHeader>

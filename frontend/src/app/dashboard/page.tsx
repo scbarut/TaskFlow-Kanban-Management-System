@@ -66,7 +66,7 @@ export default function DashboardPage() {
       <h1 className="text-3xl font-bold tracking-tight mb-8">Your Boards</h1>
       
       <div className="mb-8">
-        <form onSubmit={handleSubmit(onSubmit)} className="flex gap-2 max-w-md">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex gap-2 max-w-[448px]">
           <Input placeholder="New board title..." {...register("title")} />
           <Button type="submit">Create Board</Button>
         </form>

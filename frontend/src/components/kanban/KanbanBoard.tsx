@@ -98,17 +98,17 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
   if (loading || !board) {
     return (
       <div className="flex flex-col h-[calc(100vh-4rem)] bg-background">
-        <div className="px-6 py-4 flex items-center gap-4 border-b bg-card shrink-0">
+        <div className="px-6 py-4 flex items-center gap-4 border-b border-border/50 bg-background shrink-0">
           <Skeleton className="h-8 w-8 rounded-md" />
           <Skeleton className="h-7 w-48" />
         </div>
         <div className="flex-1 p-6 flex gap-6">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="w-[300px] flex-shrink-0 rounded-xl border bg-muted/30 p-4 space-y-3">
+            <div key={i} className="w-[300px] flex-shrink-0 rounded-xl border border-transparent bg-secondary/20 p-4 space-y-3">
               <Skeleton className="h-5 w-24" />
-              <Skeleton className="h-20 w-full rounded-lg" />
-              <Skeleton className="h-20 w-full rounded-lg" />
-              <Skeleton className="h-16 w-full rounded-lg" />
+              <Skeleton className="h-24 w-full rounded-xl" />
+              <Skeleton className="h-24 w-full rounded-xl" />
+              <Skeleton className="h-16 w-full rounded-xl" />
             </div>
           ))}
         </div>
@@ -117,21 +117,21 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] bg-background">
+    <div className="flex flex-col h-[calc(100vh-4rem)] bg-background transition-colors duration-300">
       {/* Board Header */}
-      <div className="px-6 py-4 flex items-center justify-between border-b bg-card shrink-0">
+      <div className="px-6 py-4 flex items-center justify-between border-b border-border/50 bg-background shrink-0 shadow-sm z-10">
         <div className="flex items-center gap-4">
           <Link href="/dashboard">
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-secondary transition-colors duration-300">
               <ChevronLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold">{board.title}</h1>
+          <h1 className="text-xl font-bold tracking-tight">{board.title}</h1>
         </div>
       </div>
 
       {/* Board Canvas */}
-      <div className="flex-1 overflow-x-auto p-6 flex gap-6">
+      <div className="flex-1 overflow-x-auto p-6 flex gap-6 items-start">
         <DndContext
           sensors={sensors}
           collisionDetection={customCollisionDetection}
@@ -146,16 +146,16 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
 
             {/* Empty state when no columns */}
             {board.columns.length === 0 && !isAddingCol && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <div className="flex flex-col items-center justify-center max-w-md w-full text-center p-6">
-                  <div className="rounded-2xl bg-muted/40 p-6 mb-4">
-                    <LayoutGrid className="size-12 text-muted-foreground/40" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
+                <div className="rounded-2xl border border-border/40 bg-card p-10 shadow-xl shadow-primary/5 flex flex-col items-center max-w-[448px] w-full mt-[-4rem]">
+                  <div className="bg-primary/10 p-5 rounded-full mb-6">
+                    <LayoutGrid className="size-10 text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">No columns yet</h3>
-                  <p className="text-sm text-muted-foreground mb-6">
-                    Get started by creating your first column to organize your tasks.
+                  <h3 className="text-xl font-bold text-foreground mb-3">No columns yet</h3>
+                  <p className="text-sm text-muted-foreground mb-8 text-center px-4">
+                    Get started by creating your first column to organize your team's workflow.
                   </p>
-                  <Button onClick={() => setIsAddingCol(true)} size="lg">
+                  <Button onClick={() => setIsAddingCol(true)} size="lg" className="rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 px-8">
                     <Plus className="mr-2 size-4" /> Create your first column
                   </Button>
                 </div>
@@ -167,22 +167,22 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
           {(board.columns.length > 0 || isAddingCol) && (
             <div className="w-[300px] flex-shrink-0">
               {isAddingCol ? (
-                <form onSubmit={handleAddColumn} className="bg-muted/30 p-2 rounded-xl border space-y-2">
+                <form onSubmit={handleAddColumn} className="bg-card p-3 rounded-xl border border-border shadow-md space-y-3">
                   <Input 
                     autoFocus 
                     value={newColTitle} 
                     onChange={e => setNewColTitle(e.target.value)} 
                     placeholder="Column title..." 
-                    className="h-8 shadow-none" 
+                    className="h-9 shadow-none bg-background focus-visible:ring-1" 
                   />
                   <div className="flex gap-2">
-                    <Button size="sm" type="submit" className="flex-1 h-8">Add</Button>
-                    <Button variant="ghost" size="sm" onClick={() => setIsAddingCol(false)} className="flex-1 h-8">Cancel</Button>
+                    <Button size="sm" type="submit" className="flex-1 h-8 font-medium transition-all duration-300">Add Column</Button>
+                    <Button variant="ghost" size="sm" onClick={() => setIsAddingCol(false)} className="flex-1 h-8 transition-all duration-300">Cancel</Button>
                   </div>
                 </form>
               ) : (
-                <Button variant="outline" className="w-full h-12 border-dashed bg-muted/20 hover:bg-muted/50 transition-colors" onClick={() => setIsAddingCol(true)}>
-                  + Add another column
+                <Button variant="outline" className="w-full h-14 border-dashed border-2 border-border/60 bg-transparent hover:bg-secondary/40 hover:border-primary/40 text-muted-foreground hover:text-foreground transition-all duration-300 rounded-xl" onClick={() => setIsAddingCol(true)}>
+                  <Plus className="mr-2 size-4" /> Add another column
                 </Button>
               )}
             </div>
@@ -190,7 +190,10 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
 
           {/* Drag Overlay Render */}
           {createPortal(
-            <DragOverlay dropAnimation={{ sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: "0.4" } } }) }}>
+            <DragOverlay 
+              className="z-[9999]"
+              dropAnimation={{ sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: "0.4" } } }) }}
+            >
               {activeColumn && <KanbanColumn column={activeColumn} cards={activeColumn.cards} isOverlay />}
               {activeCard && <KanbanCard card={activeCard} isOverlay />}
             </DragOverlay>,
