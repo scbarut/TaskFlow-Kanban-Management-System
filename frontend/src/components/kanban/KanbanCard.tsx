@@ -96,7 +96,7 @@ export default function KanbanCard({ card, isOverlay }: KanbanCardProps) {
         className={`group relative cursor-grab active:cursor-grabbing touch-manipulation ${isOverlay ? 'z-50' : ''}`}
       >
         <div
-          className={`bg-surface-container-lowest p-md pt-6 rounded-xl transition-all duration-300 border border-outline-variant shadow-sm hover:border-primary cursor-pointer group flex flex-col gap-sm overflow-hidden relative ${
+          className={`bg-surface-container-lowest p-3 pt-4 rounded-xl transition-all duration-300 border border-outline-variant shadow-sm hover:border-primary cursor-pointer group flex flex-col gap-2 overflow-hidden relative ${
             isOverlay ? "ring-2 ring-primary/50 shadow-xl scale-105 rotate-2" : "hover:-translate-y-0.5"
           }`}
           onClick={() => setIsEditing(true)}
@@ -109,7 +109,7 @@ export default function KanbanCard({ card, isOverlay }: KanbanCardProps) {
             />
           )}
 
-          <div className="flex flex-col gap-sm w-full">
+          <div className="flex flex-col gap-2 w-full">
             {/* Labels Top Row */}
             {card.labels && card.labels.length > 0 && (
               <div className="flex flex-wrap gap-xs">
@@ -117,7 +117,7 @@ export default function KanbanCard({ card, isOverlay }: KanbanCardProps) {
                   return (
                     <span
                       key={i}
-                      className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-white shadow-sm"
+                      className="inline-flex items-center rounded-full px-2 py-0 text-[10px] font-medium text-white shadow-sm"
                       style={{ backgroundColor: COLOR_PALETTE[i % COLOR_PALETTE.length].hex }}
                     >
                       {label}
@@ -128,7 +128,7 @@ export default function KanbanCard({ card, isOverlay }: KanbanCardProps) {
             )}
 
             {/* Title & Description */}
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <h3 className={`font-body-md text-body-md font-medium leading-tight transition-all duration-300 ${
                   card.is_completed ? "line-through text-on-surface-variant" : "text-on-surface"
                 }`}
@@ -136,16 +136,16 @@ export default function KanbanCard({ card, isOverlay }: KanbanCardProps) {
                 {card.title}
               </h3>
               {card.description && (
-                <p className="text-xs text-on-surface-variant line-clamp-2">
+                <p className="text-[11px] text-on-surface-variant line-clamp-2">
                   {card.description}
                 </p>
               )}
             </div>
 
             {/* Bottom Metadata Row */}
-            <div className="flex items-center justify-between mt-xs pt-1 mt-auto">
+            <div className="flex items-center justify-between mt-1 pt-1 mt-auto">
               {/* Checkmark aligned bottom left */}
-              <div className="flex items-center gap-xs text-on-surface-variant">
+              <div className="flex items-center gap-1 text-on-surface-variant">
                 <button
                   type="button"
                   onClick={handleToggleComplete}
@@ -153,9 +153,9 @@ export default function KanbanCard({ card, isOverlay }: KanbanCardProps) {
                   className="hover:text-primary transition-colors duration-300 focus:outline-none flex items-center"
                 >
                   {card.is_completed ? (
-                    <span className="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+                    <span className="material-symbols-outlined text-[14px] text-primary">check_circle</span>
                   ) : (
-                    <span className="material-symbols-outlined text-[16px]">radio_button_unchecked</span>
+                    <span className="material-symbols-outlined text-[14px]">radio_button_unchecked</span>
                   )}
                 </button>
               </div>
@@ -163,7 +163,7 @@ export default function KanbanCard({ card, isOverlay }: KanbanCardProps) {
               {/* Due Date aligned bottom right */}
               {dueDate && (
                 <span
-                  className={`inline-flex items-center gap-1 rounded-DEFAULT px-2 py-0.5 font-label-md text-label-md transition-colors duration-300 ${
+                  className={`inline-flex items-center gap-1 rounded-DEFAULT px-1.5 py-0 font-label-md text-[10px] transition-colors duration-300 ${
                     isOverdue
                       ? "bg-error-container text-on-error-container"
                       : isDueToday
@@ -173,7 +173,7 @@ export default function KanbanCard({ card, isOverlay }: KanbanCardProps) {
                           : "bg-surface-container text-on-surface-variant"
                   }`}
                 >
-                  <span className="material-symbols-outlined text-[14px]">schedule</span>
+                  <span className="material-symbols-outlined text-[12px]">schedule</span>
                   {format(dueDate, "MMM d")}
                 </span>
               )}

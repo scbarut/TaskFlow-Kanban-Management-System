@@ -219,7 +219,7 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
       const columnContainers = droppableContainers.filter(
         (c) => c.data.current?.type === "Column"
       );
-      return closestCenter({
+      return closestCorners({
         ...args,
         droppableContainers: columnContainers,
       });

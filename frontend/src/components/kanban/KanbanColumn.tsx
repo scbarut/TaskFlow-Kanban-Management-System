@@ -33,7 +33,7 @@ export default function KanbanColumn({ column, cards, isOverlay }: KanbanColumnP
 
   const style = {
     transition,
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
   };
 
   const handleAddCard = async (e: React.FormEvent) => {
@@ -52,79 +52,77 @@ export default function KanbanColumn({ column, cards, isOverlay }: KanbanColumnP
     }
   };
 
-  if (isDragging && !isOverlay) {
-    return (
-      <div
-        ref={setNodeRef}
-        style={style}
-        className="border-2 border-primary/30 border-dashed rounded-2xl w-[280px] flex-shrink-0 bg-primary/5 h-[500px]"
-      />
-    );
-  }
+  const isPlaceholder = isDragging && !isOverlay;
 
   return (
     <div 
       ref={setNodeRef} 
       style={style} 
-      className={`w-[280px] shrink-0 flex flex-col p-sm rounded-2xl border max-h-full transition-all duration-300 ${
-        isOverlay ? 'z-40 rotate-1 scale-105 shadow-2xl bg-surface border-primary' : 'bg-surface-container-low border-outline-variant/30'
+      className={`w-[240px] shrink-0 flex flex-col p-sm rounded-2xl border max-h-full transition-colors duration-300 ${
+        isOverlay 
+          ? 'z-40 rotate-1 scale-105 shadow-2xl bg-surface border-primary' 
+          : isPlaceholder
+            ? 'border-2 border-primary/40 border-dashed bg-primary/5 opacity-40'
+            : 'bg-surface-container-low border-outline-variant/30'
       }`}
     >
-      {/* Column Header (Draggable Handle) */}
-      <div 
-        {...attributes} 
-        {...listeners} 
-        className="flex items-center justify-between px-sm py-xs mb-sm shrink-0 group cursor-grab active:cursor-grabbing touch-manipulation rounded-xl hover:bg-surface-container transition-colors duration-300"
-      >
-        <h2 className="font-h3 text-h3 text-on-surface flex items-center gap-xs overflow-hidden pointer-events-none">
-          <span className="truncate">{column.title}</span>
-          <span className="bg-surface-variant text-on-surface-variant font-label-md text-label-md px-2 py-0.5 rounded-full shrink-0">
-            {cards.length}
-          </span>
-        </h2>
-        <button className="text-on-surface-variant hover:text-on-surface p-xs rounded-lg hover:bg-surface-variant transition-colors opacity-0 group-hover:opacity-100">
-          <span className="material-symbols-outlined text-[18px]">more_horiz</span>
-        </button>
-      </div>
-
-      {/* Column Body (Droppable for Cards) */}
-      <div className="flex flex-col gap-card_gap overflow-y-auto pr-xs pb-sm min-h-[150px]">
-        <SortableContext items={cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
-          {cards.map((card) => (
-            <KanbanCard key={card.id} card={card} />
-          ))}
-        </SortableContext>
-        {cards.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-10 text-on-surface-variant/40 border-2 border-dashed border-outline-variant/50 rounded-xl mx-1 my-2">
-            <span className="font-label-md text-label-md">Empty column</span>
-          </div>
-        )}
-      </div>
-
-      {/* Column Footer */}
-      <div className="mt-auto pt-sm">
-        {isAddingCard ? (
-          <form onSubmit={handleAddCard} className="space-y-2 bg-surface-container-lowest p-sm rounded-xl border border-outline-variant/50 shadow-sm">
-            <Input
-              autoFocus
-              value={newCardTitle}
-              onChange={(e) => setNewCardTitle(e.target.value)}
-              placeholder="What needs to be done?"
-              className="h-9 text-body-md bg-surface border-outline-variant/50 focus-visible:ring-primary"
-            />
-            <div className="flex gap-2">
-              <Button type="submit" size="sm" className="flex-1 h-8 font-label-md text-label-md bg-primary text-[#ffffff] rounded-lg">Add</Button>
-              <Button type="button" variant="ghost" size="sm" onClick={() => setIsAddingCard(false)} className="flex-1 h-8 font-label-md text-label-md rounded-lg">Cancel</Button>
-            </div>
-          </form>
-        ) : (
-          <button 
-            className="flex items-center gap-xs p-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-variant rounded-xl transition-colors font-body-md text-body-md w-full justify-start shrink-0"
-            onClick={() => setIsAddingCard(true)}
-          >
-            <span className="material-symbols-outlined text-[18px]">add</span> Add a card
+      <div className={isPlaceholder ? "opacity-0 pointer-events-none flex flex-col h-full" : "flex flex-col h-full"}>
+        {/* Column Header (Draggable Handle) */}
+        <div 
+          {...attributes} 
+          {...listeners} 
+          className="flex items-center justify-between px-sm py-xs mb-sm shrink-0 group cursor-grab active:cursor-grabbing touch-manipulation rounded-xl hover:bg-surface-container transition-colors duration-300"
+        >
+          <h2 className="font-h3 text-h3 text-on-surface flex items-center gap-xs overflow-hidden pointer-events-none">
+            <span className="truncate">{column.title}</span>
+            <span className="bg-surface-variant text-on-surface-variant font-label-md text-label-md px-2 py-0.5 rounded-full shrink-0">
+              {cards.length}
+            </span>
+          </h2>
+          <button className="text-on-surface-variant hover:text-on-surface p-xs rounded-lg hover:bg-surface-variant transition-colors opacity-0 group-hover:opacity-100">
+            <span className="material-symbols-outlined text-[18px]">more_horiz</span>
           </button>
-        )}
+        </div>
+
+        {/* Column Body (Droppable for Cards) */}
+        <div className="flex flex-col gap-card_gap overflow-y-auto px-1 pt-1 pb-sm min-h-[150px] -mx-1">
+          <SortableContext items={cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
+            {cards.map((card) => (
+              <KanbanCard key={card.id} card={card} />
+            ))}
+          </SortableContext>
+          {cards.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-10 text-on-surface-variant/40 border-2 border-dashed border-outline-variant/50 rounded-xl mx-1 my-2">
+              <span className="font-label-md text-label-md">Empty column</span>
+            </div>
+          )}
+        </div>
+
+        {/* Column Footer */}
+        <div className="mt-auto pt-sm">
+          {isAddingCard ? (
+            <form onSubmit={handleAddCard} className="space-y-2 bg-surface-container-lowest p-sm rounded-xl border border-outline-variant/50 shadow-sm">
+              <Input
+                autoFocus
+                value={newCardTitle}
+                onChange={(e) => setNewCardTitle(e.target.value)}
+                placeholder="What needs to be done?"
+                className="h-9 text-body-md bg-surface border-outline-variant/50 focus-visible:ring-primary"
+              />
+              <div className="flex gap-2">
+                <Button type="submit" size="sm" className="flex-1 h-8 font-label-md text-label-md bg-primary text-[#ffffff] rounded-lg">Add</Button>
+                <Button type="button" variant="ghost" size="sm" onClick={() => setIsAddingCard(false)} className="flex-1 h-8 font-label-md text-label-md rounded-lg">Cancel</Button>
+              </div>
+            </form>
+          ) : (
+            <button 
+              className="flex items-center gap-xs p-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-variant rounded-xl transition-colors font-body-md text-body-md w-full justify-start shrink-0"
+              onClick={() => setIsAddingCard(true)}
+            >
+              <span className="material-symbols-outlined text-[18px]">add</span> Add a card
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
