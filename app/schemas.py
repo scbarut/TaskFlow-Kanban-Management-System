@@ -58,6 +58,22 @@ class BoardListItem(BaseModel):
     created_at: datetime
 
 
+class BoardWithStats(BaseModel):
+    """Board summary with task statistics for dashboard view."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    title: str
+    owner_id: uuid.UUID
+    created_at: datetime
+    total_tasks: int = 0
+    completed_tasks: int = 0
+    remaining_tasks: int = 0
+    completion_percent: int = 0
+    column_count: int = 0
+
+
 # ── Column ────────────────────────────────────────────────────────────────────
 
 

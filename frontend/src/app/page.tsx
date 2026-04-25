@@ -33,7 +33,7 @@ export default function Home() {
                 <>
                   <Link href="/register">
                     <Button size="lg" className="rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 px-8 font-medium">
-                      Sign Up
+                      Get Started
                     </Button>
                   </Link>
                   <Link href="/login">

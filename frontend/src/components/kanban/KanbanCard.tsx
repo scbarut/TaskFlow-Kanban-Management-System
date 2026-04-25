@@ -13,12 +13,17 @@ import { useBoardStore } from "@/lib/boardStore";
 import { isBefore, isToday, format, parseISO } from "date-fns";
 import CardEditModal from "./CardEditModal";
 
-const LABEL_COLORS = [
-  { bg: "bg-blue-100 dark:bg-blue-900/30", text: "text-blue-700 dark:text-blue-400" },
-  { bg: "bg-purple-100 dark:bg-purple-900/30", text: "text-purple-700 dark:text-purple-400" },
-  { bg: "bg-amber-100 dark:bg-amber-900/30", text: "text-amber-700 dark:text-amber-400" },
-  { bg: "bg-emerald-100 dark:bg-emerald-900/30", text: "text-emerald-700 dark:text-emerald-400" },
-  { bg: "bg-rose-100 dark:bg-rose-900/30", text: "text-rose-700 dark:text-rose-400" },
+const COLOR_PALETTE = [
+  { name: "Green", hex: "#4CAF50" },
+  { name: "Gold", hex: "#FFC107" },
+  { name: "Orange", hex: "#FF9800" },
+  { name: "Red", hex: "#EF5350" },
+  { name: "Purple", hex: "#AB47BC" },
+  { name: "Blue", hex: "#42A5F5" },
+  { name: "Teal", hex: "#26A69A" },
+  { name: "Olive", hex: "#9E9D24" },
+  { name: "Pink", hex: "#EC407A" },
+  { name: "Gray", hex: "#78909C" },
 ];
 
 interface KanbanCardProps {
@@ -90,9 +95,9 @@ export default function KanbanCard({ card, isOverlay }: KanbanCardProps) {
         {...listeners}
         className={`group relative cursor-grab active:cursor-grabbing touch-manipulation ${isOverlay ? 'z-50' : ''}`}
       >
-        <Card
-          className={`relative overflow-hidden transition-all duration-300 border-border/60 bg-card hover:border-primary/30 hover:shadow-md ${
-            isOverlay ? "ring-2 ring-primary/50 shadow-xl scale-105 rotate-2" : "shadow-sm hover:-translate-y-0.5"
+        <div
+          className={`bg-surface-container-lowest p-md pt-6 rounded-xl transition-all duration-300 border border-outline-variant shadow-sm hover:border-primary cursor-pointer group flex flex-col gap-sm overflow-hidden relative ${
+            isOverlay ? "ring-2 ring-primary/50 shadow-xl scale-105 rotate-2" : "hover:-translate-y-0.5"
           }`}
           onClick={() => setIsEditing(true)}
         >
@@ -104,16 +109,16 @@ export default function KanbanCard({ card, isOverlay }: KanbanCardProps) {
             />
           )}
 
-          <div className="p-4 pt-6 flex flex-col gap-3">
+          <div className="flex flex-col gap-sm w-full">
             {/* Labels Top Row */}
             {card.labels && card.labels.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-xs">
                 {card.labels.map((label, i) => {
-                  const colorTheme = LABEL_COLORS[i % LABEL_COLORS.length];
                   return (
                     <span
                       key={i}
-                      className={`inline-flex items-center rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium ${colorTheme.text} ${colorTheme.bg}`}
+                      className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-white shadow-sm"
+                      style={{ backgroundColor: COLOR_PALETTE[i % COLOR_PALETTE.length].hex }}
                     >
                       {label}
                     </span>
@@ -124,55 +129,57 @@ export default function KanbanCard({ card, isOverlay }: KanbanCardProps) {
 
             {/* Title & Description */}
             <div className="space-y-1.5">
-              <h4 className={`text-sm font-semibold leading-tight text-foreground transition-all duration-300 ${
-                  card.is_completed ? "line-through text-muted-foreground/50" : ""
+              <h3 className={`font-body-md text-body-md font-medium leading-tight transition-all duration-300 ${
+                  card.is_completed ? "line-through text-on-surface-variant" : "text-on-surface"
                 }`}
               >
                 {card.title}
-              </h4>
+              </h3>
               {card.description && (
-                <p className="text-xs text-muted-foreground line-clamp-2">
+                <p className="text-xs text-on-surface-variant line-clamp-2">
                   {card.description}
                 </p>
               )}
             </div>
 
             {/* Bottom Metadata Row */}
-            <div className="flex items-center justify-between pt-1 mt-auto">
+            <div className="flex items-center justify-between mt-xs pt-1 mt-auto">
               {/* Checkmark aligned bottom left */}
-              <button
-                type="button"
-                onClick={handleToggleComplete}
-                onPointerDown={(e) => e.stopPropagation()}
-                className="text-muted-foreground hover:text-primary transition-colors duration-300 focus:outline-none"
-              >
-                {card.is_completed ? (
-                  <CheckCircle2 className="size-5 text-primary fill-primary/10" />
-                ) : (
-                  <Circle className="size-5 hover:fill-muted transition-colors duration-300" />
-                )}
-              </button>
+              <div className="flex items-center gap-xs text-on-surface-variant">
+                <button
+                  type="button"
+                  onClick={handleToggleComplete}
+                  onPointerDown={(e) => e.stopPropagation()}
+                  className="hover:text-primary transition-colors duration-300 focus:outline-none flex items-center"
+                >
+                  {card.is_completed ? (
+                    <span className="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+                  ) : (
+                    <span className="material-symbols-outlined text-[16px]">radio_button_unchecked</span>
+                  )}
+                </button>
+              </div>
 
               {/* Due Date aligned bottom right */}
               {dueDate && (
                 <span
-                  className={`inline-flex items-center gap-1 rounded px-2 py-1 text-[11px] font-medium transition-colors duration-300 ${
+                  className={`inline-flex items-center gap-1 rounded-DEFAULT px-2 py-0.5 font-label-md text-label-md transition-colors duration-300 ${
                     isOverdue
-                      ? "bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400"
+                      ? "bg-error-container text-on-error-container"
                       : isDueToday
-                        ? "bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400"
+                        ? "bg-tertiary-fixed text-on-tertiary-fixed"
                         : card.is_completed
-                          ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400"
-                          : "bg-muted/50 text-muted-foreground"
+                          ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                          : "bg-surface-container text-on-surface-variant"
                   }`}
                 >
-                  <Clock className="size-3" />
+                  <span className="material-symbols-outlined text-[14px]">schedule</span>
                   {format(dueDate, "MMM d")}
                 </span>
               )}
             </div>
           </div>
-        </Card>
+        </div>
       </div>
 
       <CardEditModal

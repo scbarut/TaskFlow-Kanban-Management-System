@@ -117,21 +117,26 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] bg-background transition-colors duration-300">
-      {/* Board Header */}
-      <div className="px-6 py-4 flex items-center justify-between border-b border-border/50 bg-background shrink-0 shadow-sm z-10">
-        <div className="flex items-center gap-4">
-          <Link href="/dashboard">
-            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-secondary transition-colors duration-300">
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
+    <div className="flex-1 p-container_padding min-h-[calc(100vh-56px)] flex flex-col overflow-hidden bg-background">
+      {/* Board Header Context */}
+      <div className="flex items-center justify-between mb-lg shrink-0">
+        <div className="flex items-center gap-md">
+          <Link 
+            href="/dashboard"
+            className="inline-flex items-center justify-center shrink-0 h-10 w-10 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant rounded-xl transition-colors duration-300"
+          >
+            <span className="material-symbols-outlined text-[24px]">arrow_back</span>
           </Link>
-          <h1 className="text-xl font-bold tracking-tight">{board.title}</h1>
+          <div>
+            <h1 className="font-h1 text-h1 text-on-surface">{board.title}</h1>
+            <p className="font-body-md text-body-md text-on-surface-variant mt-xs">Manage your tasks and track deliverables seamlessly.</p>
+          </div>
         </div>
       </div>
 
       {/* Board Canvas */}
-      <div className="flex-1 overflow-x-auto p-6 flex gap-6 items-start">
+      <div className="flex-1 overflow-x-auto board-scroll pb-md relative">
+        <div className="flex items-start gap-lg h-full min-w-max">
         <DndContext
           sensors={sensors}
           collisionDetection={customCollisionDetection}
@@ -165,25 +170,26 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
 
           {/* Add Column Button */}
           {(board.columns.length > 0 || isAddingCol) && (
-            <div className="w-[300px] flex-shrink-0">
+            <div className="w-[280px] shrink-0 flex flex-col">
               {isAddingCol ? (
-                <form onSubmit={handleAddColumn} className="bg-card p-3 rounded-xl border border-border shadow-md space-y-3">
+                <form onSubmit={handleAddColumn} className="bg-surface-container-low p-sm rounded-lg border border-outline-variant/30 shadow-md space-y-3">
                   <Input 
                     autoFocus 
                     value={newColTitle} 
                     onChange={e => setNewColTitle(e.target.value)} 
                     placeholder="Column title..." 
-                    className="h-9 shadow-none bg-background focus-visible:ring-1" 
+                    className="h-9 shadow-none bg-surface border-outline-variant focus-visible:ring-primary font-body-md text-body-md" 
                   />
                   <div className="flex gap-2">
-                    <Button size="sm" type="submit" className="flex-1 h-8 font-medium transition-all duration-300">Add Column</Button>
-                    <Button variant="ghost" size="sm" onClick={() => setIsAddingCol(false)} className="flex-1 h-8 transition-all duration-300">Cancel</Button>
+                    <Button size="sm" type="submit" className="flex-1 h-8 font-label-md text-label-md transition-all duration-300 bg-primary text-[#ffffff]">Add Column</Button>
+                    <Button variant="ghost" size="sm" onClick={() => setIsAddingCol(false)} className="flex-1 h-8 font-label-md text-label-md transition-all duration-300 text-on-surface-variant">Cancel</Button>
                   </div>
                 </form>
               ) : (
-                <Button variant="outline" className="w-full h-14 border-dashed border-2 border-border/60 bg-transparent hover:bg-secondary/40 hover:border-primary/40 text-muted-foreground hover:text-foreground transition-all duration-300 rounded-xl" onClick={() => setIsAddingCol(true)}>
-                  <Plus className="mr-2 size-4" /> Add another column
-                </Button>
+                <button className="flex items-center gap-xs px-md py-sm bg-surface-container-lowest/50 border border-outline-variant border-dashed text-on-surface-variant font-body-md text-body-md font-medium rounded-lg hover:bg-surface-container-low hover:text-on-surface transition-colors w-full justify-center" onClick={() => setIsAddingCol(true)}>
+                  <span className="material-symbols-outlined text-[20px]">add</span>
+                  Add Column
+                </button>
               )}
             </div>
           )}
@@ -200,6 +206,7 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
             document.body
           )}
         </DndContext>
+        </div>
       </div>
     </div>
   );

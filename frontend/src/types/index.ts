@@ -27,3 +27,15 @@ export interface Board {
   created_at: string;
   columns: Column[];
 }
+
+export interface BoardWithStats {
+  id: string;
+  title: string;
+  owner_id: string;
+  created_at: string;
+  total_tasks: number;
+  completed_tasks: number;
+  remaining_tasks: number;
+  completion_percent: number;
+  column_count: number;
+}

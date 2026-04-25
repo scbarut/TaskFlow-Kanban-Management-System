@@ -150,7 +150,7 @@ export default function CardEditModal({
           <DialogTitle>Edit Card</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-5 py-2 max-h-[60vh] overflow-y-auto pr-1">
+        <div className="space-y-5 py-2 px-1 max-h-[60vh] overflow-y-auto">
           {/* Title */}
           <div className="space-y-1.5">
             <label className="text-sm font-medium">Title</label>
