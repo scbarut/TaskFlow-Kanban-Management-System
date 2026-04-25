@@ -89,6 +89,10 @@ class CardCreate(BaseModel):
     title: str = Field(min_length=1, max_length=255)
     description: str | None = None
     position: float | None = None
+    labels: list[str] | None = None
+    due_date: datetime | None = None
+    color: str | None = Field(default=None, max_length=7)
+    is_completed: bool = False
 
 
 class CardUpdate(BaseModel):
@@ -96,6 +100,10 @@ class CardUpdate(BaseModel):
     description: str | None = None
     position: float | None = None
     column_id: uuid.UUID | None = None  # allows cross-column moves
+    labels: list[str] | None = None
+    due_date: datetime | None = None
+    color: str | None = Field(default=None, max_length=7)
+    is_completed: bool | None = None
 
 
 class CardRead(BaseModel):
@@ -106,6 +114,10 @@ class CardRead(BaseModel):
     description: str | None
     column_id: uuid.UUID
     position: float
+    labels: list[str] | None
+    due_date: datetime | None
+    color: str | None
+    is_completed: bool
     created_at: datetime
 
 

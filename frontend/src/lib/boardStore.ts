@@ -8,6 +8,8 @@ interface BoardState {
   setColumns: (columns: Column[]) => void;
   addColumn: (column: Column) => void;
   addCard: (card: Card) => void;
+  // Optimistically update a single card's fields without refetching the board
+  updateCard: (cardId: string, updates: Partial<Card>) => void;
 }
 
 export const useBoardStore = create<BoardState>((set) => ({
@@ -38,6 +40,17 @@ export const useBoardStore = create<BoardState>((set) => ({
         }
         return col;
       });
+      return { board: { ...state.board, columns } };
+    }),
+  updateCard: (cardId, updates) =>
+    set((state) => {
+      if (!state.board) return state;
+      const columns = state.board.columns.map((col) => ({
+        ...col,
+        cards: col.cards.map((c) =>
+          c.id === cardId ? { ...c, ...updates } : c
+        ),
+      }));
       return { board: { ...state.board, columns } };
     }),
 }));

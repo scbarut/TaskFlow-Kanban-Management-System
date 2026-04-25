@@ -4,6 +4,10 @@ export interface Card {
   description: string | null;
   column_id: string;
   position: number;
+  labels: string[] | null;
+  due_date: string | null;
+  color: string | null;
+  is_completed: boolean;
   created_at: string;
 }
 

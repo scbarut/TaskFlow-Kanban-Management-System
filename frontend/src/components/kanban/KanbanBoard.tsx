@@ -22,11 +22,15 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, horizontalListSortingStrategy } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 
 import KanbanColumn from "./KanbanColumn";
 import KanbanCard from "./KanbanCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { LayoutGrid } from "lucide-react";
 
 export default function KanbanBoard({ boardId }: { boardId: string }) {
   const router = useRouter();
@@ -90,13 +94,39 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
 
   const columnsId = useMemo(() => board?.columns.map(col => col.id) || [], [board?.columns]);
 
-  if (loading || !board) return null;
+  if (loading || !board) {
+    return (
+      <div className="flex flex-col h-[calc(100vh-4rem)] bg-background">
+        <div className="px-6 py-4 flex items-center gap-4 border-b bg-card shrink-0">
+          <Skeleton className="h-8 w-8 rounded-md" />
+          <Skeleton className="h-7 w-48" />
+        </div>
+        <div className="flex-1 p-6 flex gap-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="w-[300px] flex-shrink-0 rounded-xl border bg-muted/30 p-4 space-y-3">
+              <Skeleton className="h-5 w-24" />
+              <Skeleton className="h-20 w-full rounded-lg" />
+              <Skeleton className="h-20 w-full rounded-lg" />
+              <Skeleton className="h-16 w-full rounded-lg" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] bg-background">
       {/* Board Header */}
       <div className="px-6 py-4 flex items-center justify-between border-b bg-card shrink-0">
-        <h1 className="text-2xl font-bold">{board.title}</h1>
+        <div className="flex items-center gap-4">
+          <Link href="/dashboard">
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+          </Link>
+          <h1 className="text-2xl font-bold">{board.title}</h1>
+        </div>
       </div>
 
       {/* Board Canvas */}
@@ -112,6 +142,22 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
             {board.columns.map((col) => (
               <KanbanColumn key={col.id} column={col} cards={col.cards} />
             ))}
+
+            {/* Empty state when no columns */}
+            {board.columns.length === 0 && !isAddingCol && (
+              <div className="flex flex-col items-center justify-center w-full min-h-[300px] text-center">
+                <div className="rounded-2xl bg-muted/40 p-6 mb-4">
+                  <LayoutGrid className="size-12 text-muted-foreground/40" />
+                </div>
+                <h3 className="text-lg font-semibold text-muted-foreground mb-1">No columns yet</h3>
+                <p className="text-sm text-muted-foreground/70 mb-4 max-w-xs">
+                  Get started by creating your first column to organize your tasks.
+                </p>
+                <Button onClick={() => setIsAddingCol(true)}>
+                  + Create your first column
+                </Button>
+              </div>
+            )}
           </SortableContext>
 
           {/* Add Column Button */}
@@ -208,6 +254,10 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
     const { active, over } = event;
     if (!over) return;
 
+    // Use fresh state to avoid any stale closures during fast drag-and-drops
+    const currentBoard = useBoardStore.getState().board;
+    if (!currentBoard) return;
+
     const isActiveCard = active.data.current?.type === "Card";
     const activeId = active.id as string;
     const overId = over.id as string;
@@ -215,7 +265,7 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
     if (isActiveCard) {
       if (activeId === overId) return;
       
-      const newCols = [...board!.columns];
+      const newCols = [...currentBoard.columns];
       const overColumnId = over.data.current?.type === "Column" ? overId : over.data.current?.card.column_id;
       
       const targetColIdx = newCols.findIndex(c => c.id === overColumnId);
@@ -228,6 +278,9 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
       if (over.data.current?.type === "Column") {
          overIdx = targetCards.length - 1; 
       }
+
+      // If dragging failed to sync to the store yet, safely fallback
+      if (activeIdx === -1 || overIdx === -1) return;
 
       const finalCards = arrayMove(targetCards, activeIdx, overIdx);
       newCols[targetColIdx] = { ...newCols[targetColIdx], cards: finalCards };
@@ -259,9 +312,14 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
     const isActiveColumn = active.data.current?.type === "Column";
     if (isActiveColumn) {
       if (activeId === overId) return;
-      const oldIndex = board.columns.findIndex((col) => col.id === activeId);
-      const newIndex = board.columns.findIndex((col) => col.id === overId);
-      const newColumns = arrayMove(board.columns, oldIndex, newIndex);
+      
+      const targetColId = over.data.current?.type === "Column" ? overId : over.data.current?.card.column_id;
+      const oldIndex = currentBoard.columns.findIndex((col) => col.id === activeId);
+      const newIndex = currentBoard.columns.findIndex((col) => col.id === targetColId);
+      
+      if (oldIndex === -1 || newIndex === -1) return;
+
+      const newColumns = arrayMove(currentBoard.columns, oldIndex, newIndex);
 
       let newPosition = 65536.0;
       if (newColumns.length > 1) {

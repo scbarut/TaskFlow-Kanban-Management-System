@@ -65,6 +65,10 @@ async def create_card(
         description=payload.description,
         column_id=column_id,
         position=position,
+        labels=payload.labels,
+        due_date=payload.due_date,
+        color=payload.color,
+        is_completed=payload.is_completed,
     )
     db.add(card)
     await db.flush()
@@ -102,6 +106,14 @@ async def update_card(
         card.description = payload.description
     if payload.position is not None:
         card.position = payload.position
+    if payload.labels is not None:
+        card.labels = payload.labels
+    if payload.due_date is not None:
+        card.due_date = payload.due_date
+    if payload.color is not None:
+        card.color = payload.color if payload.color != "" else None
+    if payload.is_completed is not None:
+        card.is_completed = payload.is_completed
 
     await db.flush()
     await db.refresh(card)

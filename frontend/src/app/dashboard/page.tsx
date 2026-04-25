@@ -29,7 +29,8 @@ export default function DashboardPage() {
   });
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    const token = useStore.getState().token;
+    if (!isAuthenticated || !token) {
       router.push("/login");
       return;
     }
