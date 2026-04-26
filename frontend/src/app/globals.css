@@ -215,3 +215,9 @@
     scrollbar-width: none;
   }
 }
+
+/* Global loading cursor — applied to body during API requests */
+.loading-cursor,
+.loading-cursor * {
+  cursor: wait !important;
+}

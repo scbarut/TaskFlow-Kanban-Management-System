@@ -1,13 +1,17 @@
 import axios from "axios";
 import { useStore } from "./store";
+import { useUiStore } from "./uiStore";
 import { toast } from "sonner";
 
 export const api = axios.create({
   baseURL: "http://localhost:8000",
 });
 
-// Intercept requests to inject the Bearer token
+// Intercept requests to inject the Bearer token and trigger global loading cursor
 api.interceptors.request.use((config) => {
+  // Signal global loading state
+  useUiStore.getState().startLoading();
+
   // We use `getState()` so we can read the store outside of React components
   let token = useStore.getState().token;
   
@@ -30,10 +34,14 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Intercept responses to handle 401 Unauthorized globally
+// Intercept responses to handle 401 Unauthorized globally and clear loading cursor
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    useUiStore.getState().stopLoading();
+    return response;
+  },
   (error) => {
+    useUiStore.getState().stopLoading();
     if (error.response && error.response.status === 401) {
       useStore.getState().logout();
       if (typeof window !== "undefined") {
