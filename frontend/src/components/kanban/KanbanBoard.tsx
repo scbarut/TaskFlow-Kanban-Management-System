@@ -13,6 +13,7 @@ import {
   closestCorners, 
   KeyboardSensor, 
   PointerSensor, 
+  TouchSensor,
   useSensor, 
   useSensors, 
   DragStartEvent, 
@@ -49,6 +50,12 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 5, // Requires minimum 5px movement to start drag (allows clicking buttons/inputs inside)
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250, // Allow scrolling on touch devices without triggering drag
+        tolerance: 5,
       },
     }),
     useSensor(KeyboardSensor, {
@@ -117,26 +124,26 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
   }
 
   return (
-    <div className="flex-1 p-container_padding min-h-[calc(100vh-56px)] flex flex-col overflow-hidden bg-background">
+    <div className="flex-1 p-3 sm:p-container_padding min-h-[calc(100vh-56px)] flex flex-col overflow-hidden bg-background">
       {/* Board Header Context */}
-      <div className="flex items-center justify-between mb-lg shrink-0">
-        <div className="flex items-center gap-md">
+      <div className="flex items-center justify-between mb-3 sm:mb-lg shrink-0">
+        <div className="flex items-center gap-2 sm:gap-md min-w-0">
           <Link 
             href="/dashboard"
-            className="inline-flex items-center justify-center shrink-0 h-10 w-10 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant rounded-xl transition-colors duration-300"
+            className="inline-flex items-center justify-center shrink-0 h-10 w-10 min-w-[40px] text-on-surface-variant hover:text-on-surface hover:bg-surface-variant rounded-xl transition-colors duration-300"
           >
             <span className="material-symbols-outlined text-[24px]">arrow_back</span>
           </Link>
-          <div>
-            <h1 className="font-h1 text-h1 text-on-surface">{board.title}</h1>
-            <p className="font-body-md text-body-md text-on-surface-variant mt-xs">Manage your tasks and track deliverables seamlessly.</p>
+          <div className="min-w-0">
+            <h1 className="font-h1 text-h1 text-on-surface truncate">{board.title}</h1>
+            <p className="font-body-md text-body-md text-on-surface-variant mt-xs hidden sm:block">Manage your tasks and track deliverables seamlessly.</p>
           </div>
         </div>
       </div>
 
       {/* Board Canvas */}
-      <div className="flex-1 overflow-x-auto board-scroll pb-md relative">
-        <div className="flex items-start gap-lg h-full min-w-max">
+      <div className="flex-1 overflow-x-auto board-scroll pb-md relative -mx-3 px-3 sm:mx-0 sm:px-0">
+        <div className="flex items-start gap-3 sm:gap-lg h-full flex-nowrap">
         <DndContext
           sensors={sensors}
           collisionDetection={customCollisionDetection}
@@ -170,7 +177,7 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
 
           {/* Add Column Button */}
           {(board.columns.length > 0 || isAddingCol) && (
-            <div className="w-[280px] shrink-0 flex flex-col">
+            <div className="w-[85vw] sm:w-[280px] shrink-0 flex flex-col">
               {isAddingCol ? (
                 <form onSubmit={handleAddColumn} className="bg-surface-container-low p-sm rounded-lg border border-outline-variant/30 shadow-md space-y-3">
                   <Input 

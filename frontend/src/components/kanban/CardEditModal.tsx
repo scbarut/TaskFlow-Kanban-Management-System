@@ -143,14 +143,14 @@ export default function CardEditModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-[512px]"
+        className="sm:max-w-[512px] p-3 sm:p-4"
         onPointerDown={(e) => e.stopPropagation()}
       >
         <DialogHeader>
           <DialogTitle>Edit Card</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-5 py-2 px-1 max-h-[60vh] overflow-y-auto">
+        <div className="space-y-4 sm:space-y-5 py-2 px-0 sm:px-1 max-h-[50vh] sm:max-h-[60vh] overflow-y-auto">
           {/* Title */}
           <div className="space-y-1.5">
             <label className="text-sm font-medium">Title</label>
@@ -321,7 +321,7 @@ export default function CardEditModal({
           </div>
         </div>
 
-        <DialogFooter className="flex justify-between items-center sm:justify-between">
+        <DialogFooter className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center sm:justify-between gap-2">
           <Button
             variant="destructive"
             size="sm"

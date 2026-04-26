@@ -90,10 +90,10 @@ export default function KanbanCard({ card, isOverlay }: KanbanCardProps) {
     <>
       <div
         ref={setNodeRef}
-        style={style}
+        style={{ ...style, touchAction: 'none' }}
         {...attributes}
         {...listeners}
-        className={`group relative cursor-grab active:cursor-grabbing touch-manipulation ${isOverlay ? 'z-50' : ''}`}
+        className={`group relative cursor-grab active:cursor-grabbing ${isOverlay ? 'z-50' : ''}`}
       >
         <div
           className={`bg-surface-container-lowest p-3 pt-4 rounded-xl transition-all duration-300 border border-outline-variant shadow-sm hover:border-primary cursor-pointer group flex flex-col gap-2 overflow-hidden relative ${
@@ -150,7 +150,8 @@ export default function KanbanCard({ card, isOverlay }: KanbanCardProps) {
                   type="button"
                   onClick={handleToggleComplete}
                   onPointerDown={(e) => e.stopPropagation()}
-                  className="hover:text-primary transition-colors duration-300 focus:outline-none flex items-center"
+                  onTouchStart={(e) => e.stopPropagation()}
+                  className="hover:text-primary transition-colors duration-300 focus:outline-none flex items-center p-1 -m-1 min-w-[28px] min-h-[28px] justify-center"
                 >
                   {card.is_completed ? (
                     <span className="material-symbols-outlined text-[14px] text-primary">check_circle</span>

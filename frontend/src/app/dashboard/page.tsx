@@ -93,12 +93,12 @@ export default function DashboardPage() {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="flex-1 p-container_padding min-h-[calc(100vh-56px)] bg-background">
+    <div className="flex-1 p-3 sm:p-container_padding min-h-[calc(100vh-56px)] bg-background">
       <div className="max-w-6xl mx-auto">
         {/* Header Row */}
-        <div className="flex items-center justify-between mb-lg">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-lg gap-3">
           <h1 className="font-h1 text-h1 text-on-surface">Your Boards</h1>
-          <div className="flex items-center gap-sm">
+          <div className="flex items-center gap-sm flex-wrap sm:flex-nowrap">
             {/* Search */}
             <div className="relative">
               <span className="material-symbols-outlined text-[20px] text-on-surface-variant absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -109,7 +109,7 @@ export default function DashboardPage() {
                 placeholder="Search boards..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-10 pl-10 pr-4 w-[240px] rounded-xl border border-outline-variant bg-surface-container-lowest text-on-surface font-body-md text-body-md placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-300"
+                className="h-10 pl-10 pr-4 w-full sm:w-[240px] rounded-xl border border-outline-variant bg-surface-container-lowest text-on-surface font-body-md text-body-md placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-300"
               />
             </div>
             {/* New Board Button */}

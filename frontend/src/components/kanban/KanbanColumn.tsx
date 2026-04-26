@@ -58,7 +58,7 @@ export default function KanbanColumn({ column, cards, isOverlay }: KanbanColumnP
     <div 
       ref={setNodeRef} 
       style={style} 
-      className={`w-[240px] shrink-0 flex flex-col p-sm rounded-2xl border max-h-full transition-colors duration-300 ${
+      className={`w-[85vw] min-w-[280px] sm:w-[240px] sm:min-w-0 shrink-0 flex flex-col p-sm rounded-2xl border max-h-full transition-colors duration-300 ${
         isOverlay 
           ? 'z-40 rotate-1 scale-105 shadow-2xl bg-surface border-primary' 
           : isPlaceholder
@@ -71,7 +71,8 @@ export default function KanbanColumn({ column, cards, isOverlay }: KanbanColumnP
         <div 
           {...attributes} 
           {...listeners} 
-          className="flex items-center justify-between px-sm py-xs mb-sm shrink-0 group cursor-grab active:cursor-grabbing touch-manipulation rounded-xl hover:bg-surface-container transition-colors duration-300"
+          className="flex items-center justify-between px-sm py-2 sm:py-xs mb-sm shrink-0 group cursor-grab active:cursor-grabbing rounded-xl hover:bg-surface-container transition-colors duration-300"
+          style={{ touchAction: 'none' }}
         >
           <h2 className="font-h3 text-h3 text-on-surface flex items-center gap-xs overflow-hidden pointer-events-none">
             <span className="truncate">{column.title}</span>
