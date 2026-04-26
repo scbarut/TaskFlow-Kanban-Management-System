@@ -79,9 +79,6 @@ export default function KanbanColumn({ column, cards, isOverlay }: KanbanColumnP
               {cards.length}
             </span>
           </h2>
-          <button className="text-on-surface-variant hover:text-on-surface p-xs rounded-lg hover:bg-surface-variant transition-colors opacity-0 group-hover:opacity-100">
-            <span className="material-symbols-outlined text-[18px]">more_horiz</span>
-          </button>
         </div>
 
         {/* Column Body (Droppable for Cards) */}
