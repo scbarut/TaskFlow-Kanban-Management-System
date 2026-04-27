@@ -63,12 +63,14 @@ export default function RegisterPage() {
       const token = loginRes.data.access_token;
       login(token, { id: "0", email: values.email, role_title: "member", created_at: "" });
 
-      toast.success("Account created", { description: "Welcome to TaskFlow!" });
+      toast.success("Account created successfully! You can now log in.");
       router.push("/dashboard");
     } catch (error: any) {
-      toast.error("Registration failed", {
-        description: error.response?.data?.detail || "An unexpected error occurred",
-      });
+      if (error.response?.status === 409 || error.response?.status === 400) {
+        toast.error("Registration failed. This email may already be in use.");
+      } else {
+        toast.error("An error occurred. Please check your server connection.");
+      }
     } finally {
       setLoading(false);
     }

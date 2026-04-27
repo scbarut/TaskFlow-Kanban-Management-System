@@ -57,12 +57,14 @@ export default function LoginPage() {
       // For now, we will store the email in the store directly to show in navbar.
       login(token, { id: "0", email: values.email, role_title: "member", created_at: "" });
       
-      toast.success("Login successful", { description: "Welcome back to TaskFlow!" });
+      toast.success("Login successful!");
       router.push("/dashboard");
     } catch (error: any) {
-      toast.error("Login failed", {
-        description: error.response?.data?.detail || "An unexpected error occurred",
-      });
+      if (error.response?.status === 401) {
+        toast.error("Invalid email or password. Please try again.");
+      } else {
+        toast.error("An error occurred. Please check your server connection.");
+      }
     } finally {
       setLoading(false);
     }

@@ -42,7 +42,11 @@ api.interceptors.response.use(
   },
   (error) => {
     useUiStore.getState().stopLoading();
-    if (error.response && error.response.status === 401) {
+    
+    // Ignore global 401 redirect for the login endpoint itself
+    const isLoginRequest = error.config && error.config.url === "/auth/login";
+
+    if (!isLoginRequest && error.response && error.response.status === 401) {
       useStore.getState().logout();
       if (typeof window !== "undefined") {
         toast.error("Session expired. Please login again.");
