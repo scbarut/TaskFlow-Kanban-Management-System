@@ -4,7 +4,7 @@ import { useUiStore } from "./uiStore";
 import { toast } from "sonner";
 
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "/api",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
 });
 
 // Intercept requests to inject the Bearer token and trigger global loading cursor

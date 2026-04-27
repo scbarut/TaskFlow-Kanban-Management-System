@@ -28,16 +28,14 @@ app = FastAPI(
     description="A Trello-like Kanban board management API",
     version="1.0.0",
     lifespan=lifespan,
-    root_path="/api",
 )
 
-# CORS — needed for local development; in production frontend & backend
-# share the same Vercel domain so CORS is not required.
+# CORS — allow frontend origins
 allowed_origins = [
     "http://localhost:3000",
 ]
 
-# Add production frontend URL if provided (for non-Vercel deployments)
+# Add production frontend URL if provided
 frontend_url = os.getenv("FRONTEND_URL")
 if frontend_url:
     allowed_origins.append(frontend_url)
