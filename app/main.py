@@ -4,6 +4,7 @@ TaskFlow — Kanban Management System
 Entry point for the FastAPI application.
 """
 
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -27,16 +28,16 @@ app = FastAPI(
     description="A Trello-like Kanban board management API",
     version="1.0.0",
     lifespan=lifespan,
+    root_path="/api",
 )
 
-import os
-
-# CORS — open for development; lock down for production
+# CORS — needed for local development; in production frontend & backend
+# share the same Vercel domain so CORS is not required.
 allowed_origins = [
     "http://localhost:3000",
 ]
 
-# Add production frontend URL if provided
+# Add production frontend URL if provided (for non-Vercel deployments)
 frontend_url = os.getenv("FRONTEND_URL")
 if frontend_url:
     allowed_origins.append(frontend_url)

@@ -16,7 +16,9 @@ if db_url.startswith("postgresql://"):
 # asyncpg expects 'ssl' instead of 'sslmode' in the query string
 db_url = db_url.replace("sslmode=", "ssl=")
 
-engine = create_async_engine(db_url, echo=False, pool_pre_ping=True)
+from sqlalchemy.pool import NullPool
+
+engine = create_async_engine(db_url, echo=False, poolclass=NullPool)
 
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
