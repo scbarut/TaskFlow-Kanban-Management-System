@@ -87,7 +87,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-xl lg:mb-32">
             <h2 className="font-h2 text-h2 text-on-surface mb-sm">Everything you need, nothing you don't.</h2>
-            <p className="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">Engineered for speed and cognitive clarity, TaskFlow removes friction from your daily workflow.</p>
+            {/* <p className="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">Engineered for speed and cognitive clarity, TaskFlow removes friction from your daily workflow.</p>*/}
           </div>
           {/* Bento Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-md auto-rows-[300px]">

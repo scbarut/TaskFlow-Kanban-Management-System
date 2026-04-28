@@ -76,14 +76,14 @@
   --color-secondary-container: #d4e0f8;
   --color-secondary-fixed-dim: #bbc7de;
 
-  --spacing-container_padding: 20px;
+  --spacing-container_padding: 24px;
   --spacing-sm: 8px;
-  --spacing-base: 6px;
-  --spacing-card_gap: 10px;
+  --spacing-base: 4px;
+  --spacing-card_gap: 12px;
   --spacing-md: 16px;
-  --spacing-xs: 6px;
+  --spacing-xs: 4px;
   --spacing-xl: 32px;
-  --spacing-lg: 20px;
+  --spacing-lg: 24px;
   --spacing-column_width: 280px;
 
   --font-h2: Inter, sans-serif;
@@ -100,7 +100,7 @@
   --text-h2--font-weight: 600;
 
   --text-label-sm: 11px;
-  --text-label-sm--line-height: 1.2;
+  --text-label-sm--line-height: 1.1;
   --text-label-sm--letter-spacing: 0.05em;
   --text-label-sm--font-weight: 600;
 
@@ -114,7 +114,7 @@
   --text-body-md--letter-spacing: 0;
   --text-body-md--font-weight: 400;
 
-  --text-label-md: 13px;
+  --text-label-md: 12px;
   --text-label-md--line-height: 1.2;
   --text-label-md--letter-spacing: 0.02em;
   --text-label-md--font-weight: 500;

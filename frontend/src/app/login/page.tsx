@@ -9,10 +9,7 @@ import { toast } from "sonner";
 import { useStore } from "@/lib/store";
 import { api } from "@/lib/api";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -71,46 +68,76 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex-1 flex items-center justify-center p-4">
-      <Card className="w-full max-w-[384px]">
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">Welcome Back</CardTitle>
-          <CardDescription className="text-center">
-            Enter your credentials to access your boards
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
+    <div className="flex-1 flex flex-col relative overflow-hidden bg-surface-container text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+      {/* Translucent Brand Icon Background Element */}
+      <div className="absolute -bottom-32 -left-32 text-primary opacity-[0.03] select-none pointer-events-none z-0 transform rotate-12">
+        <span className="material-symbols-outlined text-[600px] leading-none block" style={{ fontVariationSettings: "'FILL' 1" }}>task_alt</span>
+      </div>
+      <div className="absolute -top-40 -right-40 text-primary opacity-[0.02] select-none pointer-events-none z-0 transform -rotate-12">
+        <span className="material-symbols-outlined text-[500px] leading-none block" style={{ fontVariationSettings: "'FILL' 1" }}>task_alt</span>
+      </div>
+
+      <main className="flex-grow flex items-center justify-center p-lg relative z-10 w-full">
+        <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-xl shadow-[0_1px_3px_rgba(0,0,0,0.1)] w-full max-w-[448px] transition-all duration-300">
+          {/* Header */}
+          <div className="text-center mb-xl">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-primary-fixed text-primary mb-md">
+              <span className="material-symbols-outlined text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>task_alt</span>
+            </div>
+            <h1 className="font-h1 text-h1 text-on-surface mb-xs tracking-tight">TaskFlow</h1>
+            <p className="font-body-md text-body-md text-on-surface-variant">Log in to your account to continue</p>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-lg">
+            {/* Email Input */}
+            <div className="flex flex-col gap-xs">
+              <label className="font-label-md text-label-md text-on-surface" htmlFor="email">Email address</label>
+              <input 
+                id="email" 
                 type="email"
-                placeholder="you@example.com"
+                placeholder="name@company.com" 
+                className="w-full bg-transparent border border-outline rounded-DEFAULT px-md py-[10px] font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors"
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message}</p>
+                <p className="font-label-md text-label-md text-error mt-1">{errors.email.message}</p>
               )}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
+
+            {/* Password Input */}
+            <div className="flex flex-col gap-xs">
+              <label className="font-label-md text-label-md text-on-surface" htmlFor="password">Password</label>
+              <input 
+                id="password" 
                 type="password"
-                placeholder="••••••••"
+                placeholder="••••••••" 
+                className="w-full bg-transparent border border-outline rounded-DEFAULT px-md py-[10px] font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors"
                 {...register("password")}
               />
               {errors.password && (
-                <p className="text-sm text-destructive">{errors.password.message}</p>
+                <p className="font-label-md text-label-md text-error mt-1">{errors.password.message}</p>
               )}
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Logging in..." : "Login"}
-            </Button>
+
+            {/* Primary Action */}
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="w-full bg-primary text-on-primary font-label-md text-label-md py-md px-lg rounded-DEFAULT hover:bg-on-primary-fixed-variant active:scale-[0.98] transition-all flex justify-center items-center gap-xs mt-sm shadow-sm disabled:opacity-70"
+            >
+              {loading ? "Logging in..." : "Log In"}
+            </button>
           </form>
-        </CardContent>
-      </Card>
+
+
+
+          {/* Footer Link */}
+          <p className="font-body-md text-body-md text-on-surface-variant text-center mt-xl">
+            Don't have an account? <a href="/register" className="text-primary hover:text-on-primary-fixed-variant font-medium hover:underline transition-colors">Sign up</a>
+          </p>
+        </div>
+      </main>
     </div>
   );
 }
