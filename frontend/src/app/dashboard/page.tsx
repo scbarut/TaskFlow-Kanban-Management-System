@@ -13,6 +13,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const boardSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -25,6 +33,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const [boardToDelete, setBoardToDelete] = useState<string | null>(null);
 
   const { register, handleSubmit, reset } = useForm<z.infer<typeof boardSchema>>({
     resolver: zodResolver(boardSchema),
@@ -77,16 +86,22 @@ export default function DashboardPage() {
     }
   };
 
-  const handleDeleteBoard = async (e: React.MouseEvent, boardId: string) => {
+  const handleDeleteClick = (e: React.MouseEvent, boardId: string) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!confirm("Are you sure you want to delete this board?")) return;
+    setBoardToDelete(boardId);
+  };
+
+  const confirmDeleteBoard = async () => {
+    if (!boardToDelete) return;
     try {
-      await api.delete(`/boards/${boardId}`);
-      setBoards(boards.filter((b) => b.id !== boardId));
+      await api.delete(`/boards/${boardToDelete}`);
+      setBoards(boards.filter((b) => b.id !== boardToDelete));
       toast.success("Board deleted");
     } catch {
       toast.error("Failed to delete board");
+    } finally {
+      setBoardToDelete(null);
     }
   };
 
@@ -190,7 +205,7 @@ export default function DashboardPage() {
                   <div className="flex items-start justify-between">
                     <h2 className="font-h3 text-h3 text-on-surface truncate pr-sm">{board.title}</h2>
                     <button
-                      onClick={(e) => handleDeleteBoard(e, board.id)}
+                      onClick={(e) => handleDeleteClick(e, board.id)}
                       className="shrink-0 p-xs rounded-lg text-on-surface-variant hover:text-error hover:bg-error-container transition-colors opacity-0 group-hover:opacity-100"
                       title="Delete board"
                     >
@@ -251,6 +266,26 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={!!boardToDelete} onOpenChange={(open) => !open && setBoardToDelete(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Board</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this board? This action cannot be undone and will permanently delete all columns and tasks inside this board.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setBoardToDelete(null)} className="font-label-md">
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDeleteBoard} className="font-label-md">
+              Delete Board
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
