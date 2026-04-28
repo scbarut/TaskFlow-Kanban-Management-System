@@ -34,19 +34,25 @@ export default function DashboardPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [boardToDelete, setBoardToDelete] = useState<string | null>(null);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   const { register, handleSubmit, reset } = useForm<z.infer<typeof boardSchema>>({
     resolver: zodResolver(boardSchema),
   });
 
   useEffect(() => {
+    if (!isHydrated) return;
     const token = useStore.getState().token;
     if (!isAuthenticated || !token) {
       router.push("/login");
       return;
     }
     fetchBoards();
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, router, isHydrated]);
 
   const fetchBoards = async () => {
     try {
@@ -105,7 +111,7 @@ export default function DashboardPage() {
     }
   };
 
-  if (!isAuthenticated) return null;
+  if (!isHydrated || !isAuthenticated) return null;
 
   return (
     <div className="flex-1 p-3 sm:p-container_padding min-h-[calc(100vh-56px)] bg-background">

@@ -45,6 +45,11 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
   
   const [isAddingCol, setIsAddingCol] = useState(false);
   const [newColTitle, setNewColTitle] = useState("");
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -64,13 +69,14 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
   );
 
   useEffect(() => {
+    if (!isHydrated) return;
     if (!isAuthenticated) {
       router.push("/login");
       return;
     }
     if (!boardId || boardId === "undefined") return;
     fetchBoard();
-  }, [boardId, isAuthenticated]);
+  }, [boardId, isAuthenticated, isHydrated]);
 
   const fetchBoard = async () => {
     try {
@@ -102,7 +108,7 @@ export default function KanbanBoard({ boardId }: { boardId: string }) {
 
   const columnsId = useMemo(() => board?.columns.map(col => col.id) || [], [board?.columns]);
 
-  if (loading || !board) {
+  if (!isHydrated || loading || !board) {
     return (
       <div className="flex flex-col h-[calc(100vh-4rem)] bg-background">
         <div className="px-6 py-4 flex items-center gap-4 border-b border-border/50 bg-background shrink-0">
